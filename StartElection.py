@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request 
 
 app = Flask(__name__)
 
@@ -10,18 +10,20 @@ data = [["SPL-Girl", [["candidate1", "path1", "no of votes"],["candidate2", "pat
 
 @app.route('/login')
 def hello():
-    return render_template("login.html", ref1= "/css", ref2="/vote")
-
-
-'''
-@app.route('/css')
-def index():        
-    return render_template("style.css", _external=True)
-'''
+    return render_template("login.html")
 
 @app.route('/vote')
-def voting():        
+def voting():
     return render_template("Vote-page.html", data = data)
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    print("Hello")
+    print(request.form)
+    return "Thank you."
+    sleep(120)
+    return render_template("login.html")
+
 
 
 
