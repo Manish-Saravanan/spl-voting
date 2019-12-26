@@ -1,27 +1,55 @@
 <html lang="en">
-<form action=exec({{ url_for('static',filename='action/vote.py') }}) method="get" id="form1">
+<form action=/submit method="post" id="form1">
+<style>
+body {
+  background-image: url({{ url_for('static',filename='styles/bg2.jpg') }});
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+.button{
+  width: 25%;
+  background: none;
+  border: 2px solid #4caf50;
+  color: white;
+  padding: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  margin: 12px 0;
+}
+</style>
+<table style="width:100%">
 {%for i in range(4)%}
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>
-      Election
+        Election
     </title>
   </head>
-  
   <body>
-    <h1 style="color: black">
+  <tr>  
+    <td>
+    <h1 style="color:white" "font-family:verdana">
       {{data[i][0]}}
     </h1>
+    </td>
+  </tr>
+  <tr>
     <p>
       {%for j in data[i][1]%}
-        <img src={{ url_for('static',filename='imges/{{j[1]}}') }} width="46" height="34">
-        <input type="radio" name={{data[i][0]}} value={{j}}> {{j[0]}}
+        <td>
+        <img src={{ url_for('static',filename='images/'+ j[1]) }} width="300" height="400"> <br>
+        <input type="radio" name={{data[i][0]}} value={{j}} ><label for={{data[i][0]}} style="color:white" "font-family:verdana"> {{j[0]}} </label>
+        </td>
       {%endfor%}
     </p>
+  </tr>
   </body>
 {%endfor%}
+
 </form>
-<button type="submit" form="form1" value="Submit">Vote</button>
+</table>
+<button type="submit" form="form1" value="Submit" class = "button">Vote</button>
 </html>

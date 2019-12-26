@@ -1,7 +1,7 @@
 <html lang="en">
 <style>
 body {
-  background-image: url('bg2.jpg');
+  background-image: {{ url_for('static',filename='style/bg2.jpg') }};
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
@@ -20,12 +20,12 @@ body {
   </head>
   
   <body>
-      <h1 style="color:white" "font-family:verdana">
-      <b> <u> {{data[i][0]}} </b> </u>
+    <h1 style="color:white" "font-family:verdana">
+      <b> <u> {{data[i][0]}} </u> </b>
     </h1>
     <p>
       {%for j in data[i][1]%}
-        <img src={{ url_for('static',filename='imges/{{j[1]}}') }} width="46" height="34">
+        
         <input type="radio" name={{data[i][0]}} value={{j}}> {{j[0]}}
       {%endfor%}
     </p>
