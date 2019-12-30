@@ -17,9 +17,7 @@ body {
   cursor: pointer;
   margin: 12px 0;
 }
-</style>
-<table style="width:100%">
-{%for i in range(4)%}
+
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,20 +26,25 @@ body {
         Election
     </title>
   </head>
+</style>
+<input type="hidden"  name="rlno" value={{rlno}}>
+<table style="width:100%">
+{%for i in cat%}
   <body>
   <tr>  
     <td>
     <h1 style="color:white" "font-family:verdana">
-      {{data[i][0]}}
+      {{i}}
     </h1>
     </td>
   </tr>
   <tr>
     <p>
-      {%for j in data[i][1]%}
+      
+      {%for j in GetCandidateNames(i)%}
         <td>
-        <img src={{ url_for('static',filename='images/'+ j[1]) }} width="300" height="400"> <br>
-        <input type="radio" name={{data[i][0]}} value={{j}} ><label for={{data[i][0]}} style="color:white" "font-family:verdana"> {{j[0]}} </label>
+        <img src={{ url_for('static',filename='images/'+ GetPath(j) ) }} width="300" height="400"> <br>
+        <input type="radio" name={{i}} value={{j}} ><label for={{i}} style="color:white" "font-family:verdana"> {{j}} </label>
         </td>
       {%endfor%}
     </p>
