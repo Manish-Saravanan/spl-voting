@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>login</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+  </head>
+  <body>
+<div class="login-box">
+<form action=/authadmin method="post" id="auth">
+  <h1>Admin Login</h1>
+  <div class="message">
+  <p align=center color=red>
+    {{Msg}}
+  </p>
+  </div>
+  <div class="textbox">
+    <i class="fas fa-lock"></i>
+    <input type="password" name="passwd" placeholder="Admin Password">
+  </div>
+</form>
+  <input type="submit" form = "auth" class="btn" value="Sign in">
+</div>
+  </body>
+</html>
+

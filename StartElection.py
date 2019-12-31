@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, request, flash, redirect, get_flashed_messages
-from databaseLibraries import GetCat, GetPass, GetCandidateNames, CastVote, GetPath, hasVoted, GetCandidateData, addCandidate
+from databaseLibraries import *
 from jinja2 import Environment
 import os
 import datetime
@@ -21,10 +21,6 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/admin')
-def adminpage():
-    data = GetCandidateData()
-    return render_template("admin.html", cat = category, data = data)
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
@@ -37,11 +33,49 @@ def submit():
             filename = candidateName + str(datetime.datetime.now()).split('-')[0] + '.' + file.filename.split('.')[-1]
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             addCandidate(candidateName, filename, category)
-
+   
+    flash('LoggedIn', '200')
     data = GetCandidateData()
     return redirect('/admin')
 
 
+@app.route('/adminlogin')
+def admin_login():
+    try:
+        return render_template("adminlogin.html", Msg=get_flashed_messages('401')[0][1])
+    except IndexError:
+        return render_template("adminlogin.html", Msg='')
+
+@app.route('/authadmin', methods=['POST'])
+def admin_auth_task():
+    form_data = request.form.to_dict()
+    passcode = form_data.get('passwd')
+    cp = GetAdminPass()
+    if (cp != None) & (passcode == cp):
+        flash('LoggedIn', '200')
+        return redirect('/admin')
+    else:
+        flash('Incorrect credentials.', '401')
+        return redirect("/adminlogin")
+
+@app.route('/admin')
+def admin_view():
+    data = GetCandidateData()
+    try:
+        if get_flashed_messages('200')[0][1] == 'LoggedIn':
+            return render_template("admin.html", cat = category, data = data, GetPath = GetPath)
+    except IndexError:
+        return redirect('/adminlogin')
+
+@app.route('/delete', methods=['POST'])
+def deleteCandidate():
+    form_data = request.form.to_dict()
+    Cid = form_data.get('CID')
+    delCandidate(Cid)
+    print(Cid)
+    print('deleted.')
+    flash('LoggedIn', '200')
+    return redirect('/admin')
 
 @app.route('/login')
 def login_view():
@@ -50,7 +84,7 @@ def login_view():
     except IndexError:
         return render_template("login.html", Msg='')
 
-@app.route('/authenticate', methods=['POST'])
+@app.route('/vote', methods=['POST'])
 def auth_task():
     form_data = request.form.to_dict()
     rlno = form_data.get('rollno')

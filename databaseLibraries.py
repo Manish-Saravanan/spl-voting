@@ -1,4 +1,5 @@
 import sqlite3
+import base64
 
 def GetPass(rollno):
     conn = sqlite3.connect('election.db')
@@ -47,7 +48,10 @@ def GetPath(candidateName):
     cur = conn.cursor()
     cur.execute('''SELECT imageFilename FROM CandidateData WHERE CandidateName = ?''', (candidateName, ))
     c = cur.fetchone()
-    return c[0]
+    if c!= None:    
+        return c[0]
+    else:
+        return None
 
 def hasVoted(rollno):
     conn = sqlite3.connect('election.db')
@@ -72,5 +76,19 @@ def GetCandidateData():
     L =  cur.fetchall()
     return  L
 
+def GetAdminPass():
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT passcode FROM adminCredentials''')
+    c = cur.fetchone()
+    if (c != None):
+        return base64.b64decode(c[0])
+    else:
+        return None
 
-
+def delCandidate(candidateID):
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute("DELETE FROM CandidateData WHERE CandidateID = ?", (candidateID, ))
+    cur.execute("DELETE FROM ContestDetails WHERE CandidateID = ?", (candidateID, ))
+    conn.commit()
