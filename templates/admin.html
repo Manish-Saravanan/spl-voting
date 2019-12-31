@@ -1,24 +1,33 @@
 <html>
-<body>
-
-<h3>A demonstration of how to access a File Upload Button</h3>
-<form action=/submit method="post" id="form1" enctype=multipart/form-data>
-
-<input type="file" name='myFile' >
-
-<p>Click the "Try it" button to disable the file upload button.</p>
-
-<button onclick="myFunction()">Try it</button>
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myFile");
-  x.disabled = true;
-}
-</script>
-
-</form>
-
-</body>
+    <body>
+        <form action=/submit method="post" id="form1" enctype=multipart/form-data>
+            <select name=category>
+                {%for i in cat%}
+                    <option value="{{i}}">{{i}}</option><br>
+                {%endfor%}
+            </select><br><br>
+            <input type='text' name='candidateName' placeholder='Candidate name'><br><br>
+            <input type="file" name='myFile'> <br><br>
+            <button type='submit'>Add</button>
+        </form><br><br><br>
+        <table style="width:50%">
+            {%for cand in data%}
+            <tr>
+                <td>
+                    {{cand[0]}}
+                </td>
+                <td>
+                    {{cand[1]}}
+                </td>
+                <td>
+                    {{cand[2]}}
+                </td>
+                <td>
+                    <button type='button'>X</button>
+                </td>
+            </tr>
+            {%endfor%}
+        </table>
+    </body>
 </html>
 

@@ -58,3 +58,19 @@ def hasVoted(rollno):
         return bool(int(c[0]))
     else:
         return False
+def addCandidate(candidateName, filename, category):
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute("INSERT INTO CandidateData(CandidateName, ImageFilename) VALUES (?,?)", (candidateName, filename))
+    cur.execute("INSERT INTO ContestDetails(CandidateID, Category, NoOfVotes) VALUES (LAST_INSERT_ROWID(), ?, 0)", (category, ))
+    conn.commit()
+
+def GetCandidateData():
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute("SELECT a.CandidateID, a.CandidateName, b.Category FROM CandidateData a, ContestDetails b WHERE a.CandidateID = b.CandidateID")
+    L =  cur.fetchall()
+    return  L
+
+
+
