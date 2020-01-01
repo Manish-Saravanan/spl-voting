@@ -1,23 +1,6 @@
 <html lang="en">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
 <form action=/submitVote method="post" id="form1">
-<style>
-body {
-  background-image: url({{ url_for('static',filename='styles/bg2.jpg') }});
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-}
-.button{
-  width: 25%;
-  background: none;
-  border: 2px solid #4caf50;
-  color: white;
-  padding: 5px;
-  font-size: 18px;
-  cursor: pointer;
-  margin: 12px 0;
-}
-
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,14 +9,13 @@ body {
         Election
     </title>
   </head>
-</style>
 <input type="hidden"  name="rlno" value={{rlno}}>
 <table style="width:100%">
 {%for i in cat%}
   <body>
   <tr>  
     <td>
-    <h1 style="color:white" "font-family:verdana">
+    <h1>
       {{i}}
     </h1>
     </td>
@@ -43,8 +25,8 @@ body {
       
       {%for j in GetCandidateNames(i)%}
         <td>
-        <img src={{ url_for('static',filename='images/'+ GetPath(j) ) }} width="300" height="400"> <br>
-        <input type="radio" name={{i}} value={{j}} ><label for={{i}} style="color:white" "font-family:verdana"> {{j}} </label>
+        <img src={{ url_for('static',filename='images/'+ GetPath(j[0]) ) }} width="100" height="133.3"> <br>
+        <input type="radio" name={{i}} value={{j[0]}} required><label for={{i}} style="font-size:14px"> {{j[1]}} </label>
         </td>
       {%endfor%}
     </p>
@@ -54,5 +36,5 @@ body {
 
 </form>
 </table>
-<button type="submit" form="form1" value="Submit" class = "button">Vote</button>
+<button type="submit" form="form1" value="Submit" class = "btn" style="color:black;width:20%">Vote</button>
 </html>

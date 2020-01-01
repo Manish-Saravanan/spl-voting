@@ -5,7 +5,7 @@
     <title>login</title>
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
   </head>
-  <body>
+  <body style="background: url({{ url_for('static',filename='styles/bg.jpg') }}) no-repeat;  background-size: cover;">
     <div class="login-box">
       <form action=/vote method="post" id="auth">
         <h1>Login</h1>

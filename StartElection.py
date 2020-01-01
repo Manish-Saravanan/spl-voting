@@ -30,7 +30,7 @@ def submit():
     if (request.method == 'POST') & ('myFile' in request.files):
         file = request.files['myFile']
         if (file.filename != '') & allowed_file(file.filename):
-            filename = candidateName + str(datetime.datetime.now()).split('-')[0] + '.' + file.filename.split('.')[-1]
+            filename = str(candidateName + str(datetime.datetime.now()).split('-')[0] + '.' + file.filename.split('.')[-1]).replace(' ', '_')
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             addCandidate(candidateName, filename, category)
    
@@ -63,7 +63,7 @@ def admin_view():
     data = GetCandidateData()
     try:
         if get_flashed_messages('200')[0][1] == 'LoggedIn':
-            return render_template("admin.html", cat = category, data = data, GetPath = GetPath)
+            return render_template("admin.html", cat = category, data = data, GetPath = GetPath, isElectionOpen = isElectionOpen)
     except IndexError:
         return redirect('/adminlogin')
 
@@ -86,27 +86,34 @@ def login_view():
 
 @app.route('/vote', methods=['POST'])
 def auth_task():
-    form_data = request.form.to_dict()
-    rlno = form_data.get('rollno')
-    passcode = form_data.get('pass')
-    cp = GetPass(rlno)
-    Voted = hasVoted(rlno)
-    if (cp != None) & (passcode == cp):
-        if  (not Voted):
-            return render_template("Vote-page.html", cat = cat, GetCandidateNames = GetCandidateNames, GetPath = GetPath, rlno = rlno)
+    if isElectionOpen():
+        form_data = request.form.to_dict()
+        rlno = form_data.get('rollno')
+        passcode = form_data.get('pass')
+        cp = GetPass(rlno)
+        Voted = hasVoted(rlno)
+        if (cp != None) & (passcode == cp):
+            if  (not Voted):
+                return render_template("Vote-page.html", cat = cat, GetCandidateNames = GetCandidateNames, GetPath = GetPath, rlno = rlno)
+            else:
+                flash('Aldready voted. You cannot vote again.', '401')
+                return redirect("/login")
         else:
-            flash('Aldready voted. You cannot vote again.', '401')
+            flash('Incorrect roll number or passcode.', '401')
             return redirect("/login")
     else:
-        flash('Incorrect roll number or passcode.', '401')
+        flash('Voting is not open.', '401')
         return redirect("/login")
+
+@app.route('/backToLogin', methods=['POST'])
+def backToLogin():
+    return redirect("/login")
 
 @app.route('/submitVote', methods=['POST'])
 def submitVote():
     Votes = request.form.to_dict()
     CastVote(Votes, cat, Votes['rlno'])
-    flash('', '401')
-    return redirect("/login")
+    return render_template("Success.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='80')

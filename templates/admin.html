@@ -1,23 +1,30 @@
 <html>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
     <body>
-        <form action=/submit method="post" id="form1" enctype=multipart/form-data>
-            <select name=category>
-                {%for i in cat%}
-                    <option value="{{i}}">{{i}}</option><br>
-                {%endfor%}
-            </select><br><br>
-            <input type='text' name='candidateName' placeholder='Candidate name'><br><br>
-            <input type="file" name='myFile'> <br><br>
-            <button type='submit'>Add</button>
-        </form><br><br><br>
+        {%if not isElectionOpen()%}
+            <form action=/submit method="post" id="form1" enctype=multipart/form-data>
+                <div class="loginbox" style="width:40%">
+                  <select name=category class="textbox" required>
+                      <option value="" disabled selected>Category</option>
+                      {%for i in cat%}
+                          <option value="{{i}}">{{i}}</option>
+                      {%endfor%}
+                  </select>
+                  <input type='text' name='candidateName' placeholder='Candidate name' class='textbox' required>
+                  <input type="file" name='myFile' class='textbox' required>
+                  <button type='submit' class='btn' style="color:black;width:50%">Add</button>
+                </div>
+            </form><br><br><br>
+        {%endif%}
         <table style="width:50%">
-            <th>
+            <th style="text-align:left;color:black;border-bottom: 3px solid #4caf50">
                 
             </th>
-            <th style="background:'#3CA9FA'">
+            <th style="text-align:left;color:black;border-bottom: 3px solid #4caf50">
                 Candidate Name
             </th>
-            <th style="background:'#3CA9FA'">
+            <th style="text-align:left;color:black;border-bottom: 3px solid #4caf50">
                 Category
             </th>
             <th>
@@ -25,7 +32,7 @@
             {%for cand in data%}
             <tr>
                 <td>
-                    <img src={{ url_for('static',filename='images/'+ GetPath(cand[1]) ) }} width="75" height="100">
+                    <img src={{ url_for('static',filename='images/'+ GetPath(cand[0]) ) }} width="75" height="100">
                 </td>
                 <td>
                     {{cand[1]}}
@@ -34,10 +41,14 @@
                     {{cand[2]}}
                 </td>
                 <td>
-                    <form action=/delete method="post" id="form2">
-                        <input type=hidden value={{cand[0]}} name=CID>
-                        <button type='submit' name={{cand[0]}}>X</button>
-                    </form>
+                    {%if not isElectionOpen()%}
+                        <form action=/delete method="post" id="form2">
+                            <input type=hidden value={{cand[0]}} name=CID>
+                            <button type='submit' name={{cand[0]}} style="border:0;background:none">
+                                <i class='fa fa-trash'></i>
+                            </button>
+                        </form>
+                    {%endif%}
                 </td>
             </tr>
             {%endfor%}

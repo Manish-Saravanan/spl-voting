@@ -24,29 +24,27 @@ def GetCat():
 def GetCandidateNames(category):
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
-    cur.execute("SELECT a.CandidateName FROM CandidateData a, ContestDetails b WHERE b.Category = ? AND a.CandidateID = b.CandidateID", (category, ))
-    Lt =  cur.fetchall()
-    L = []
-    for i in Lt:
-        L.append(i[0])
+    cur.execute("SELECT a.CandidateID, a.CandidateName FROM CandidateData a, ContestDetails b WHERE b.Category = ? AND a.CandidateID = b.CandidateID", (category, ))
+    L =  cur.fetchall()
     return  L
 
 def CastVote(Votes, categories, rollno):
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
     for i in categories:
-        candidateName = Votes[i]
-        cur.execute('''SELECT CandidateID FROM CandidateData WHERE CandidateName = ?''', (candidateName, ))
-        c = cur.fetchone()
-        candidateID = c[0]
-        cur.execute("UPDATE ContestDetails SET NoOfVotes = NoOfVotes + 1 WHERE CandidateID = ?", (candidateID, ))
+        cur.execute("UPDATE ContestDetails SET NoOfVotes = NoOfVotes + 1 WHERE CandidateID = ?", (Votes[i], ))
+        #candidateName = Votes[i]
+        #cur.execute('''SELECT CandidateID FROM CandidateData WHERE CandidateName = ?''', (candidateName, ))
+        #c = cur.fetchone()
+        #candidateID = c[0]
+        #cur.execute("UPDATE ContestDetails SET NoOfVotes = NoOfVotes + 1 WHERE CandidateID = ?", (candidateID, ))
     cur.execute("UPDATE credentials SET Voted = 1 WHERE RollNo = ?", (rollno, ))
     conn.commit()
 
-def GetPath(candidateName):
+def GetPath(candidateID):
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
-    cur.execute('''SELECT imageFilename FROM CandidateData WHERE CandidateName = ?''', (candidateName, ))
+    cur.execute('''SELECT imageFilename FROM CandidateData WHERE CandidateID = ?''', (candidateID, ))
     c = cur.fetchone()
     if c!= None:    
         return c[0]
@@ -91,4 +89,24 @@ def delCandidate(candidateID):
     cur = conn.cursor()
     cur.execute("DELETE FROM CandidateData WHERE CandidateID = ?", (candidateID, ))
     cur.execute("DELETE FROM ContestDetails WHERE CandidateID = ?", (candidateID, ))
+    conn.commit()
+
+def isElectionOpen():
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT isOpen FROM ElectionOpen''')
+    c = cur.fetchone()
+    return bool(int(c[0]))
+
+def ElectionClose():
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute('''UPDATE TABLE ElectionOpen SET isOpen = 1''')
+    conn.commit()
+
+
+def ElectionOpen():
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute('''UPDATE TABLE ElectionOpen SET isOpen = 1''')
     conn.commit()
