@@ -59,6 +59,14 @@ def admin_auth_task():
         return redirect("/adminlogin")
 
 @app.route('/admin')
+def admin_view_1():
+    try:
+        if get_flashed_messages('200')[0][1] == 'LoggedIn':
+            return render_template("admin-page.html", isElectionOpen = isElectionOpen, flash = flash)
+    except IndexError:
+        return redirect('/adminlogin')
+
+@app.route('/admin1')
 def admin_view():
     data = GetCandidateData()
     try:
@@ -66,6 +74,11 @@ def admin_view():
             return render_template("admin.html", cat = category, data = data, GetPath = GetPath, isElectionOpen = isElectionOpen)
     except IndexError:
         return redirect('/adminlogin')
+
+@app.route('/admin2')
+def admin_openView():
+    flash('LoggedIn', '200')
+    return redirect('/admin1')
 
 @app.route('/delete', methods=['POST'])
 def deleteCandidate():
