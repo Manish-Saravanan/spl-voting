@@ -52,6 +52,7 @@ def admin_auth_task():
     passcode = form_data.get('passwd')
     cp = GetAdminPass()
     if (cp != None) & (passcode == cp):
+        data = GetCandidateData()
         flash('LoggedIn', '200')
         return redirect('/admin')
     else:
@@ -62,7 +63,7 @@ def admin_auth_task():
 def admin_view_1():
     try:
         if get_flashed_messages('200')[0][1] == 'LoggedIn':
-            return render_template("admin-page.html", isElectionOpen = isElectionOpen, flash = flash)
+            return render_template("admin-page.html", isElectionOpen = isElectionOpen,)
     except IndexError:
         return redirect('/adminlogin')
 
@@ -80,13 +81,25 @@ def admin_openView():
     flash('LoggedIn', '200')
     return redirect('/admin1')
 
+@app.route('/openVoting')
+def open_Voting():
+    ElectionOpen()
+    #flash('Election has been opened.', '205')
+    flash('LoggedIn', '200')
+    return redirect('/admin')
+
+@app.route('/closeVoting')
+def close_Voting():
+    ElectionClose()
+    #flash('Election has been closed.', '205')
+    flash('LoggedIn', '200')
+    return redirect('/admin')
+
 @app.route('/delete', methods=['POST'])
 def deleteCandidate():
     form_data = request.form.to_dict()
     Cid = form_data.get('CID')
     delCandidate(Cid)
-    print(Cid)
-    print('deleted.')
     flash('LoggedIn', '200')
     return redirect('/admin')
 

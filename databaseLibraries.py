@@ -33,11 +33,6 @@ def CastVote(Votes, categories, rollno):
     cur = conn.cursor()
     for i in categories:
         cur.execute("UPDATE ContestDetails SET NoOfVotes = NoOfVotes + 1 WHERE CandidateID = ?", (Votes[i], ))
-        #candidateName = Votes[i]
-        #cur.execute('''SELECT CandidateID FROM CandidateData WHERE CandidateName = ?''', (candidateName, ))
-        #c = cur.fetchone()
-        #candidateID = c[0]
-        #cur.execute("UPDATE ContestDetails SET NoOfVotes = NoOfVotes + 1 WHERE CandidateID = ?", (candidateID, ))
     cur.execute("UPDATE credentials SET Voted = 1 WHERE RollNo = ?", (rollno, ))
     conn.commit()
 
@@ -101,12 +96,12 @@ def isElectionOpen():
 def ElectionClose():
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
-    cur.execute('''UPDATE TABLE ElectionOpen SET isOpen = 1''')
+    cur.execute('''UPDATE ElectionOpen SET isOpen = 0''')
     conn.commit()
 
 
 def ElectionOpen():
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
-    cur.execute('''UPDATE TABLE ElectionOpen SET isOpen = 1''')
+    cur.execute('''UPDATE ElectionOpen SET isOpen = 1''')
     conn.commit()
