@@ -9,7 +9,7 @@ def GetPass(rollno):
     cur.execute('''SELECT passcode FROM credentials WHERE RollNo = ?''', (rollno, ))
     c = cur.fetchone()
     if (c != None):
-        return c[0]
+        return base64.b64decode(c[0])
     else:
         return None
 

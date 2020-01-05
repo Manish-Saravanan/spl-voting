@@ -4,6 +4,14 @@
 
     </head>
     <body>
+        <div>
+          <table width="100%">
+          <tr>
+          <td><img src ="{{ url_for('static', filename='styles/psbb_logo.jpg') }}"></td>
+          <td><h1>School Pupil Leader Election</h1></td>
+          </tr>
+          </table>
+        </div>
         <div class="topnav">
              {%if isElectionOpen()%}
                  <a class="active" href="{{url_for('admin_openView')}}" target='iFrame_1'>View candidates</a>

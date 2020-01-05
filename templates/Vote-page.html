@@ -1,4 +1,12 @@
 <html lang="en">
+        <div>
+          <table width="100%">
+          <tr>
+          <td><img src ="{{ url_for('static', filename='styles/psbb_logo.jpg') }}"></td>
+          <td><h1>School Pupil Leader Election</h1></td>
+          </tr>
+          </table>
+        </div>
 <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
 <form action=/submitVote method="post" id="form1">
   <head>
