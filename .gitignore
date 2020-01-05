@@ -1,0 +1,10 @@
+static/images/*.jpg
+*.swp
+*.swo
+*.db
+static/images/*.png
+static/images/*.jpeg
+static/images/*.JPG
+static/images/*.PNG
+static/images/*.JPEG
+*.pyc

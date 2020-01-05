@@ -8,8 +8,6 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'key'
 
-cat = GetCat()
-
 UPLOAD_FOLDER = os.getcwd() + '/static/images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
@@ -33,17 +31,29 @@ def submit():
             filename = str(candidateName + str(datetime.datetime.now()).split('-')[0] + '.' + file.filename.split('.')[-1]).replace(' ', '_')
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             addCandidate(candidateName, filename, category)
-   
+        else:
+            flash('LoggedIn', '200')
+            return redirect('/admin1')
+    else:
+        flash('LoggedIn', '200')
+        return redirect('/admin1')
     flash('LoggedIn', '200')
     data = GetCandidateData()
-    return redirect('/admin')
+    return redirect('/admin1')
 
+@app.route('/resetVoting')
+def reset_election():
+    ResetElection()
+    flash('Election has been opened.', '205')
+    flash('LoggedIn', '200')
+    return "System  has been reset."
 
 @app.route('/adminlogin')
 def admin_login():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
     try:
-        return render_template("adminlogin.html", Msg=get_flashed_messages('401')[0][1])
-    except IndexError:
+        return render_template("adminlogin.html", Msg=Res['401'])
+    except KeyError:
         return render_template("adminlogin.html", Msg='')
 
 @app.route('/authadmin', methods=['POST'])
@@ -61,19 +71,33 @@ def admin_auth_task():
 
 @app.route('/admin')
 def admin_view_1():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
     try:
-        if get_flashed_messages('200')[0][1] == 'LoggedIn':
-            return render_template("admin-page.html", isElectionOpen = isElectionOpen,)
-    except IndexError:
+        if Res['200'] == 'LoggedIn':
+            messg = Res['205'] if '205' in Res else ""
+            print(messg)
+            return render_template("admin-page.html", isElectionOpen = isElectionOpen, Msg = messg)
+        else:
+            print("else")
+            return redirect('/adminlogin')
+    except KeyError:
         return redirect('/adminlogin')
+        print("Key error")
+
+@app.route('/electionResult')
+def ViewResults():
+    cat = GetCat()
+    return render_template("ViewResults.html", cat = cat, GetResults = GetResults)
 
 @app.route('/admin1')
 def admin_view():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
     data = GetCandidateData()
+    cat = GetCat()
     try:
-        if get_flashed_messages('200')[0][1] == 'LoggedIn':
+        if Res['200'] == 'LoggedIn':
             return render_template("admin.html", cat = category, data = data, GetPath = GetPath, isElectionOpen = isElectionOpen)
-    except IndexError:
+    except KeyError:
         return redirect('/adminlogin')
 
 @app.route('/admin2')
@@ -84,14 +108,14 @@ def admin_openView():
 @app.route('/openVoting')
 def open_Voting():
     ElectionOpen()
-    #flash('Election has been opened.', '205')
+    flash('Election has been opened.', '205')
     flash('LoggedIn', '200')
     return redirect('/admin')
 
 @app.route('/closeVoting')
 def close_Voting():
     ElectionClose()
-    #flash('Election has been closed.', '205')
+    flash('Election has been closed.', '205')
     flash('LoggedIn', '200')
     return redirect('/admin')
 
@@ -101,13 +125,52 @@ def deleteCandidate():
     Cid = form_data.get('CID')
     delCandidate(Cid)
     flash('LoggedIn', '200')
-    return redirect('/admin')
+    return redirect('/admin1')
+
+@app.route('/classsection', methods=['POST'])
+def viewVoters():
+    form_data = request.form.to_dict()
+    cls = form_data.get('class_section')
+    flash(cls, 'classsection')
+    return redirect('/viewCredentials')
+
+@app.route('/viewCredentials')
+def ViewCred():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
+    try:
+        return render_template("VotersList.html", cls = Res['classsection'], GetClassSection = GetClassSection, GetVoterDetails = GetVoterDetails)
+    except KeyError:
+        return render_template("VotersList.html", cls = '', GetClassSection = GetClassSection, GetVoterDetails = GetVoterDetails)
+
+@app.route('/changePswd')
+def chngPasswd():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
+    try:
+        return render_template("ChangePassword.html", Msg = Res['changepassword'])
+    except KeyError:
+        return render_template("ChangePassword.html", Msg = '')
+
+@app.route('/changepassword', methods=['POST'])
+def changePassword():
+    form_data = request.form.to_dict()
+    cp = GetAdminPass()
+    if form_data.get('oldpsswd') == cp:
+        if form_data.get('newpsswd1') == form_data.get('newpsswd2'):
+            ChangePasswd(form_data.get('newpsswd1'))
+            return "Successfully  changed."
+        else:
+            flash('Passwords do not match.', 'changepassword')
+            return redirect('/changePswd')
+    else:
+        flash('Password does not match.', 'changepassword')
+        return redirect('/changePswd')
 
 @app.route('/login')
 def login_view():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
     try:
-        return render_template("login.html", Msg=get_flashed_messages('401')[0][1])
-    except IndexError:
+        return render_template("login.html", Msg=Res['401'])
+    except KeyError:
         return render_template("login.html", Msg='')
 
 @app.route('/vote', methods=['POST'])
@@ -120,6 +183,7 @@ def auth_task():
         Voted = hasVoted(rlno)
         if (cp != None) & (passcode == cp):
             if  (not Voted):
+                cat = GetCat()
                 return render_template("Vote-page.html", cat = cat, GetCandidateNames = GetCandidateNames, GetPath = GetPath, rlno = rlno)
             else:
                 flash('Aldready voted. You cannot vote again.', '401')
@@ -138,9 +202,9 @@ def backToLogin():
 @app.route('/submitVote', methods=['POST'])
 def submitVote():
     Votes = request.form.to_dict()
+    cat = GetCat()
     CastVote(Votes, cat, Votes['rlno'])
     return render_template("Success.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='80')
-

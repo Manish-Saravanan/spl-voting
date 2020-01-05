@@ -29,6 +29,12 @@ body{
   color: white;
 }
 
+.heading {
+  text-align:left;
+  color:black;
+  border-bottom: 3px solid #4caf50;
+}
+
 .login-box{
   width: 280px;
   position: absolute;

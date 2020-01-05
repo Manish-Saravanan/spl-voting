@@ -1,0 +1,36 @@
+<html>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <head>
+    </head>
+    <body>
+        <table width='50%'>
+            {%for i in cat%}
+                <tr>
+                    <td>
+                        <h1><br>
+                            {{i}}
+                        </h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td class='heading'>
+                        Candidate name
+                    </td>
+                    <td class='heading'>
+                        Number of votes
+                    </td>
+                </tr>
+                {%for j in GetResults(i)%}
+                    <tr>
+                        {%for k in j%}
+                            <td>
+                                {{k}}
+                            </td>
+                        {%endfor%}
+                    </tr>
+                {%endfor%}
+            {%endfor%}
+        </table>
+    </body>
+</html>
+

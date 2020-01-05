@@ -1,0 +1,38 @@
+<html>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <head>
+    </head>
+    <body>
+        <div style='width:50%'>
+        <form action=/classsection method="post" id="form1" width='50%'>
+            <select name=class_section class="textbox" required>
+                <option value="" disabled selected>Select class</option>
+                {%for i in GetClassSection()%}
+                     <option value="{{i[0]}}">{{i[0]}}</option>
+                {%endfor%}
+            </select>
+        <button type='submit' class='btn' style="color:black;width:20%">Filter</button>
+        </form>
+        </div>
+        <table width='50%'>
+            <tr>
+                <td class='heading'>
+                    Roll No
+                </td>
+                <td class='heading'>
+                    Passcode
+                </td>
+            </tr>
+            {%for voter in GetVoterDetails(cls)%}
+                <tr>
+                    <td>
+                        {{voter[0]}}
+                    </td>
+                    <td>
+                        {{voter[1]}}
+                    </td>
+                </tr>
+            {%endfor%}
+        </table>
+    </body>
+</html>
