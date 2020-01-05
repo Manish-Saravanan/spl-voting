@@ -123,7 +123,7 @@ def ResetElection():
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
     for file in os.listdir("static/images/"):
-        if (file.endswith(".png") or file.endswith(".jpg") or file.endswith(".jpeg")):
+        if (file.lower().endswith(".png") or file.lower().endswith(".jpg") or file.lower().endswith(".jpeg")):
             os.remove("static/images/" + file) 
     cur.execute("DELETE FROM CandidateData")
     cur.execute("DELETE FROM ContestDetails")
