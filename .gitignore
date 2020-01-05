@@ -1,8 +1,8 @@
-static/images/*.jpg
 *.swp
 *.swo
 *.db
 static/images/*.png
+static/images/*.jpg
 static/images/*.jpeg
 static/images/*.JPG
 static/images/*.PNG
