@@ -28,7 +28,7 @@ def submit():
     if (request.method == 'POST') & ('myFile' in request.files):
         file = request.files['myFile']
         if (file.filename != '') & allowed_file(file.filename):
-            filename = str(candidateName + str(datetime.datetime.now()).split('-')[0] + '.' + file.filename.split('.')[-1]).replace(' ', '_')
+            filename = str(candidateName + str(datetime.datetime.now()) + '.' + file.filename.split('.')[-1]).replace(' ', '_')
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             addCandidate(candidateName, filename, category)
         else:
