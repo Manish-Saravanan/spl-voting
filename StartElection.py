@@ -41,12 +41,27 @@ def submit():
     data = GetCandidateData()
     return redirect('/admin1')
 
-@app.route('/resetVoting')
+@app.route('/confirmReset')
+def confirmReset():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
+    try:
+        return render_template("ResetConfirmation.html", Msg = Res['401'])
+    except KeyError:
+        return render_template("ResetConfirmation.html", Msg = '')
+
+@app.route('/resetVoting', methods=['POST'])
 def reset_election():
-    ResetElection()
-    flash('Election has been opened.', '205')
-    flash('LoggedIn', '200')
-    return "System  has been reset."
+    form_data = request.form.to_dict()
+    passcode = form_data.get('password')
+    cp = GetAdminPass()
+    if (cp != None) & (passcode == cp):
+        ResetElection()
+        flash('', '401')
+        flash('LoggedIn', '200')
+        return "System  has been reset."
+    else:
+        flash('Incorrect credentials.', '401')
+        return redirect("/confirmReset")
 
 @app.route('/adminlogin')
 def admin_login():
@@ -64,6 +79,7 @@ def admin_auth_task():
     if (cp != None) & (passcode == cp):
         data = GetCandidateData()
         flash('LoggedIn', '200')
+        flash('', '401')
         return redirect('/admin')
     else:
         flash('Incorrect credentials.', '401')
@@ -75,14 +91,12 @@ def admin_view_1():
     try:
         if Res['200'] == 'LoggedIn':
             messg = Res['205'] if '205' in Res else ""
-            print(messg)
+            flash('', '401')
             return render_template("admin-page.html", isElectionOpen = isElectionOpen, Msg = messg)
         else:
-            print("else")
             return redirect('/adminlogin')
     except KeyError:
         return redirect('/adminlogin')
-        print("Key error")
 
 @app.route('/electionResult')
 def ViewResults():
@@ -157,6 +171,7 @@ def changePassword():
     if form_data.get('oldpsswd') == cp:
         if form_data.get('newpsswd1') == form_data.get('newpsswd2'):
             ChangePasswd(form_data.get('newpsswd1'))
+            flash('', 'changepassword')
             return "Successfully  changed."
         else:
             flash('Passwords do not match.', 'changepassword')
@@ -184,6 +199,7 @@ def auth_task():
         if (cp != None) & (passcode == cp):
             if  (not Voted):
                 cat = GetCat()
+                flash('', '401')
                 return render_template("Vote-page.html", cat = cat, GetCandidateNames = GetCandidateNames, GetPath = GetPath, rlno = rlno)
             else:
                 flash('Aldready voted. You cannot vote again.', '401')
