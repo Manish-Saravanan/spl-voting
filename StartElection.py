@@ -56,9 +56,9 @@ def reset_election():
     cp = GetAdminPass()
     if (cp != None) & (passcode == cp):
         ResetElection()
-        flash('', '401')
+        flash('Election has been opened.', '205')
         flash('LoggedIn', '200')
-        return "System  has been reset."
+        return redirect('/admin')
     else:
         flash('Incorrect credentials.', '401')
         return redirect("/confirmReset")
@@ -92,7 +92,7 @@ def admin_view_1():
         if Res['200'] == 'LoggedIn':
             messg = Res['205'] if '205' in Res else ""
             flash('', '401')
-            return render_template("admin-page.html", isElectionOpen = isElectionOpen, Msg = messg)
+            return render_template("admin-page.html", isElectionOpen = isElectionOpen, Msg = messg, total = TotalCount())
         else:
             return redirect('/adminlogin')
     except KeyError:
@@ -119,19 +119,49 @@ def admin_openView():
     flash('LoggedIn', '200')
     return redirect('/admin1')
 
-@app.route('/openVoting')
+@app.route('/openVoting', methods=['POST'])
 def open_Voting():
-    ElectionOpen()
-    flash('Election has been opened.', '205')
-    flash('LoggedIn', '200')
-    return redirect('/admin')
+    form_data = request.form.to_dict()
+    passcode = form_data.get('password')
+    cp = GetAdminPass()
+    if (cp != None) & (passcode == cp):
+        ElectionOpen()
+        flash('Election has been opened.', '205')
+        flash('LoggedIn', '200')
+        return redirect('/admin')
+    else:
+        flash('Incorrect credentials.', '401')
+        return redirect("/confirmOpen")
 
-@app.route('/closeVoting')
+@app.route('/confirmOpen')
+def confirmOpen():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
+    try:
+        return render_template("OpenConfirmation.html", Msg = Res['401'])
+    except KeyError:
+        return render_template("OpenConfirmation.html", Msg = '')
+
+@app.route('/closeVoting', methods=['POST'])
 def close_Voting():
-    ElectionClose()
-    flash('Election has been closed.', '205')
-    flash('LoggedIn', '200')
-    return redirect('/admin')
+    form_data = request.form.to_dict()
+    passcode = form_data.get('password')
+    cp = GetAdminPass()
+    if (cp != None) & (passcode == cp):
+        ElectionClose()
+        flash('Election has been opened.', '205')
+        flash('LoggedIn', '200')
+        return redirect('/admin')
+    else:
+        flash('Incorrect credentials.', '401')
+        return redirect("/confirmClose")
+
+@app.route('/confirmClose')
+def confirmClose():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
+    try:
+        return render_template("CloseConfirmation.html", Msg = Res['401'])
+    except KeyError:
+        return render_template("CloseConfirmation.html", Msg = '')
 
 @app.route('/delete', methods=['POST'])
 def deleteCandidate():
@@ -223,4 +253,4 @@ def submitVote():
     return render_template("Success.html")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='80')
+    app.run(host='0.0.0.0', port='80', debug = True)

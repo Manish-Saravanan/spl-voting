@@ -97,12 +97,12 @@ def isElectionOpen():
     cur = conn.cursor()
     cur.execute('''SELECT isOpen FROM ElectionOpen''')
     c = cur.fetchone()
-    return bool(int(c[0]))
+    return int(c[0])
 
 def ElectionClose():
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
-    cur.execute('''UPDATE ElectionOpen SET isOpen = 0''')
+    cur.execute('''UPDATE ElectionOpen SET isOpen = 2''')
     conn.commit()
 
 
@@ -127,6 +127,7 @@ def ResetElection():
             os.remove("static/images/" + file) 
     cur.execute("DELETE FROM CandidateData")
     cur.execute("DELETE FROM ContestDetails")
+    cur.execute('''UPDATE ElectionOpen SET isOpen = 0''')
     cur.execute("SELECT RollNo FROM Credentials")
     for candidate in cur.fetchall():
         cur.execute("UPDATE credentials SET passcode = ?, Voted = 0 WHERE RollNo = ?", (base64.b64encode(str(randint(100000, 999999))), candidate[0]))
@@ -167,3 +168,15 @@ def SetupVoters(cls):
         cur.execute("INSERT INTO credentials(rollno, passcode, voted) VALUES(?, ?, '0')", (rollNo, password))
     conn.commit()
 
+def TotalCount():
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM credentials WHERE voted = 1")
+    totalCount = (cur.fetchall())[0][0]
+    return totalCount
+
+def DeleteVoters(cls):
+    conn = sqlite3.connect('election.db')
+    cur = conn.cursor()
+    cur.execute("DELETE FROM credentials WHERE rollno LIKE ?", (cls + "%", ))
+    conn.commit()

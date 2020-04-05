@@ -1,7 +1,9 @@
 <html>
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
     <head>
-
+        <title>
+            Admin
+        </title>
     </head>
     <body>
         <div>
@@ -13,22 +15,28 @@
           </table>
         </div>
         <div class="topnav">
-             {%if isElectionOpen()%}
-                 <a class="active" href="{{url_for('admin_openView')}}" target='iFrame_1'>View candidates</a>
-                 <a href="{{url_for('close_Voting')}}">Close voting</a>
-             {%else%}
+             {%if (isElectionOpen()==0) %}
                  <a class="active" href="{{url_for('admin_openView')}}" target='iFrame_1'>Edit candidates</a>
-                 <a href="{{url_for('open_Voting')}}">Open voting</a>
+                 <a href="{{url_for('confirmOpen')}}">Open voting</a>
+             {%elif (isElectionOpen()==1) %}
+                 <a class="active" href="{{url_for('admin_openView')}}" target='iFrame_1'>View candidates</a>
+                 <a href="{{url_for('confirmClose')}}">Close voting</a>
+             {%elif (isElectionOpen()==2) %}
+                 <a class="active" href="{{url_for('admin_openView')}}" target='iFrame_1'>View candidates</a>
                  <a href="{{url_for('ViewResults')}}" target='iFrame_1'>View results</a>
-                 <a href="{{url_for('confirmReset')}}" target='iFrame_1'>Reset</a>
+                 <a href="{{url_for('confirmReset')}}">Reset</a>
              {%endif%}
              <a href="{{url_for('chngPasswd')}}" target='iFrame_1'>Change password</a>
              <a href="{{url_for('ViewCred')}}" target='iFrame_1'>View voter credentials</a>
         </div>
         <div>
+             {%if isElectionOpen()!=0%}
+                 <h1> Total voted so far: {{total}} </h1>
+             {%endif%}
+        </div>
+        <div>
         <iframe name='iFrame_1' style='width:100%;height:100%'>
         </iframe>
-
     </body>
 </html>
 

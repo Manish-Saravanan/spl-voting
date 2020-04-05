@@ -1,0 +1,19 @@
+<html>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <head>
+    </head>
+    <body>
+    <div class='login-box'>
+    <form name='resetvoting' method='POST' action='/closeVoting'>
+        <h1 style='color:black'>Close</h1>
+        <input type='password' class='textbox' name='password' placeholder='Enter admin password'></input>
+        <input class="btn" type="submit" value="Reset" style='color:black'>Close</input>
+    </form>
+    <div class="message">
+        <p align=center color=#FF0000>
+            {{Msg}}
+        </p>
+    </div>
+    </body>
+</html>
+
