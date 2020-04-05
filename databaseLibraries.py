@@ -115,7 +115,7 @@ def ElectionOpen():
 def GetResults(cat):
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
-    cur.execute("SELECT a.CandidateName, b.NoOfVotes FROM CandidateData a, ContestDetails b WHERE a.CandidateID = b.CandidateID AND b.Category = ? ORDER BY b.NoOfVotes desc", (cat, ))
+    cur.execute("SELECT a.CandidateName, b.NoOfVotes, a.imageFilename FROM CandidateData a, ContestDetails b WHERE a.CandidateID = b.CandidateID AND b.Category = ? ORDER BY b.NoOfVotes desc", (cat, ))
     L =  cur.fetchall()
     return  L
 

@@ -22,7 +22,10 @@
                 </tr>
                 {%for j in GetResults(i)%}
                     <tr>
-                        {%for k in j%}
+                        <td>
+                            <img src={{ url_for('static',filename='images/'+ j[2] ) }} width="75" height="100">
+                        </td>
+                        {%for k in j[:2]%}
                             <td>
                                 {{k}}
                             </td>
