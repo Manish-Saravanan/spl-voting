@@ -20,48 +20,17 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/submit', methods=['GET', 'POST'])
-def submit():
-    form_data = request.form.to_dict()
-    candidateName = form_data.get('candidateName')
-    category = form_data.get('category')
-    if (request.method == 'POST') & ('myFile' in request.files):
-        file = request.files['myFile']
-        if (file.filename != '') & allowed_file(file.filename):
-            filename = str(candidateName + str(datetime.datetime.now()) + '.' + file.filename.split('.')[-1]).replace(' ', '_')
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            addCandidate(candidateName, filename, category)
-        else:
-            flash('LoggedIn', '200')
-            return redirect('/admin1')
-    else:
-        flash('LoggedIn', '200')
-        return redirect('/admin1')
-    flash('LoggedIn', '200')
-    data = GetCandidateData()
-    return redirect('/admin1')
+@app.route('/')
+def landing():
+    return redirect('/login')
 
-@app.route('/confirmReset')
-def confirmReset():
+@app.route('/login')
+def login_view():
     Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
     try:
-        return render_template("ResetConfirmation.html", Msg = Res['401'])
+        return render_template("login.html", Msg=Res['401'])
     except KeyError:
-        return render_template("ResetConfirmation.html", Msg = '')
-
-@app.route('/resetVoting', methods=['POST'])
-def reset_election():
-    form_data = request.form.to_dict()
-    passcode = form_data.get('password')
-    cp = GetAdminPass()
-    if (cp != None) & (passcode == cp):
-        ResetElection()
-        flash('Election has been opened.', '205')
-        flash('LoggedIn', '200')
-        return redirect('/admin')
-    else:
-        flash('Incorrect credentials.', '401')
-        return redirect("/confirmReset")
+        return render_template("login.html", Msg='')
 
 @app.route('/adminlogin')
 def admin_login():
@@ -97,11 +66,6 @@ def admin_view_1():
             return redirect('/adminlogin')
     except KeyError:
         return redirect('/adminlogin')
-
-@app.route('/electionResult')
-def ViewResults():
-    cat = GetCat()
-    return render_template("ViewResults.html", cat = cat, GetResults = GetResults)
 
 @app.route('/admin1')
 def admin_view():
@@ -163,6 +127,49 @@ def confirmClose():
     except KeyError:
         return render_template("CloseConfirmation.html", Msg = '')
 
+@app.route('/resetVoting', methods=['POST'])
+def reset_election():
+    form_data = request.form.to_dict()
+    passcode = form_data.get('password')
+    cp = GetAdminPass()
+    if (cp != None) & (passcode == cp):
+        ResetElection()
+        flash('Election has been opened.', '205')
+        flash('LoggedIn', '200')
+        return redirect('/admin')
+    else:
+        flash('Incorrect credentials.', '401')
+        return redirect("/confirmReset")
+
+@app.route('/confirmReset')
+def confirmReset():
+    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
+    try:
+        return render_template("ResetConfirmation.html", Msg = Res['401'])
+    except KeyError:
+        return render_template("ResetConfirmation.html", Msg = '')
+
+@app.route('/submit', methods=['GET', 'POST'])
+def submit():
+    form_data = request.form.to_dict()
+    candidateName = form_data.get('candidateName')
+    category = form_data.get('category')
+    if (request.method == 'POST') & ('myFile' in request.files):
+        file = request.files['myFile']
+        if (file.filename != '') & allowed_file(file.filename):
+            filename = str(candidateName + str(datetime.datetime.now()) + '.' + file.filename.split('.')[-1]).replace(' ', '_')
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            addCandidate(candidateName, filename, category)
+        else:
+            flash('LoggedIn', '200')
+            return redirect('/admin1')
+    else:
+        flash('LoggedIn', '200')
+        return redirect('/admin1')
+    flash('LoggedIn', '200')
+    data = GetCandidateData()
+    return redirect('/admin1')
+
 @app.route('/delete', methods=['POST'])
 def deleteCandidate():
     form_data = request.form.to_dict()
@@ -170,6 +177,11 @@ def deleteCandidate():
     delCandidate(Cid)
     flash('LoggedIn', '200')
     return redirect('/admin1')
+
+@app.route('/electionResult')
+def ViewResults():
+    cat = GetCat()
+    return render_template("ViewResults.html", cat = cat, GetResults = GetResults)
 
 @app.route('/classsection', methods=['POST'])
 def viewVoters():
@@ -185,14 +197,6 @@ def ViewCred():
         return render_template("VotersList.html", cls = Res['classsection'], GetClassSection = GetClassSection, GetVoterDetails = GetVoterDetails)
     except KeyError:
         return render_template("VotersList.html", cls = '', GetClassSection = GetClassSection, GetVoterDetails = GetVoterDetails)
-
-@app.route('/changePswd')
-def chngPasswd():
-    Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
-    try:
-        return render_template("ChangePassword.html", Msg = Res['changepassword'])
-    except KeyError:
-        return render_template("ChangePassword.html", Msg = '')
 
 @app.route('/changepassword', methods=['POST'])
 def changePassword():
@@ -210,17 +214,18 @@ def changePassword():
         flash('Password does not match.', 'changepassword')
         return redirect('/changePswd')
 
-@app.route('/login')
-def login_view():
+
+@app.route('/changePswd')
+def chngPasswd():
     Res = dict(map(lambda x:(x[0],x[1]), get_flashed_messages(with_categories=True)))
     try:
-        return render_template("login.html", Msg=Res['401'])
+        return render_template("ChangePassword.html", Msg = Res['changepassword'])
     except KeyError:
-        return render_template("login.html", Msg='')
+        return render_template("ChangePassword.html", Msg = '')
 
 @app.route('/vote', methods=['POST'])
 def auth_task():
-    if isElectionOpen():
+    if isElectionOpen()==1:
         form_data = request.form.to_dict()
         rlno = form_data.get('rollno')
         passcode = form_data.get('pass')
@@ -237,9 +242,13 @@ def auth_task():
         else:
             flash('Incorrect roll number or passcode.', '401')
             return redirect("/login")
-    else:
+    elif isElectionOpen()==0:
         flash('Voting is not open.', '401')
         return redirect("/login")
+    elif isElectionOpen()==2:
+        flash('Voting is closed.', '401')
+        return redirect("/login")
+    else: return "The database has been affected"
 
 @app.route('/backToLogin', methods=['POST'])
 def backToLogin():
@@ -253,4 +262,4 @@ def submitVote():
     return render_template("Success.html")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='80', debug = True)
+    app.run(host='0.0.0.0', port='80')
