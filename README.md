@@ -37,29 +37,29 @@ python StartElection.py
 There are three phases in the application. 
 * The first is the pre-election phase when candidates can be added/deleted.    
 * The second phase is when the election happens.    
-* The third is the post-election phase when results can be viewed.   
+* The third is the post-election phase when results can be viewed. 
 You can go only in one direction; you cannot go backwards.   
 ### Admin:
-1.	In http://<HostIP>/login page, click on login as Admin.
+1.	In http://\<HostIP\>/login page, click on login as Admin.
 2.	Use the admin credentials to login.   
 *	View voter credentials   
-    Click on the ‘View voter credentials’ tab to view the Login ID and password of the voters.   
+        Click on the ‘View voter credentials’ tab to view the Login ID and password of the voters.   
 * Change password   
-    In the ‘Change password’ tab, enter your old password, new password and confirm your new password.   
+        In the ‘Change password’ tab, enter your old password, new password and confirm your new password.   
 #### Phase 1   
 * Adding candidates:   
 1.	In the ‘Edit candidates’ tab, fill in all the data and click on Add.   
 2.	If you want to delete a candidate click on the delete icon corresponding to the candidate.   
 * Move to next phase   
-    Click on ‘Open voting’ tab and enter admin password to move to second phase.   
+        Click on ‘Open voting’ tab and enter admin password to move to second phase.   
 #### Phase 2   
 The total number of voters who have voted so far is displayed on the top.   
 * View candidates   
-    Click on the ‘View candidates’ tab. (The candidates can only be viewed and not edited.)   
+        Click on the ‘View candidates’ tab. (The candidates can only be viewed and not edited.)   
 * Move to next phase   
-    Click on ‘Close voting’ tab and enter admin password to move to post-election phase.   
+        Click on ‘Close voting’ tab and enter admin password to move to post-election phase.   
 #### Phase 3   
 * View results   
-    Click on ‘View results’ tab to view results.   
+        Click on ‘View results’ tab to view results.   
 * Move to next phase   
-    Click on ‘Reset’ tab and enter admin password to move to post-election phase.   
+        Click on ‘Reset’ tab and enter admin password to move to pre-election phase. This will set the data back to defaults for the next year's election  
