@@ -28,7 +28,7 @@ python setup-voters.py <class>
 python delete-voters <class>
 ```
 
-5.	Run the following command whenever you want to start using the application.
+5.	Run the following command every time you want to start using the application.
 ```
 python StartElection.py
 ```
