@@ -162,7 +162,7 @@ def SetupVoters(cls):
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
     cur.execute("DELETE FROM credentials WHERE rollno LIKE ?", (cls + "%", ))
-    for i in range(1, 37):
+    for i in range(1, 41):
         rollNo = cls + "%02d"%i
         password = base64.b64encode(str(randint(100000, 999999)))
         cur.execute("INSERT INTO credentials(rollno, passcode, voted) VALUES(?, ?, '0')", (rollNo, password))
