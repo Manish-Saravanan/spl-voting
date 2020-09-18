@@ -63,3 +63,5 @@ The total number of voters who have voted so far is displayed on the top.
         Click on ‘View results’ tab to view results.   
 * Move to next phase   
         Click on ‘Reset’ tab and enter admin password to move to pre-election phase. This will set the data back to defaults for the next year's election  
+
+The default password for admin is pass, and has to be changed when using it.

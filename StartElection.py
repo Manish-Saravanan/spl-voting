@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from flask import Flask, render_template, url_for, request, flash, redirect, get_flashed_messages
 from databaseLibraries import *
 from jinja2 import Environment
@@ -262,4 +264,4 @@ def submitVote():
     return render_template("Success.html")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='80')
+    app.run(host='0.0.0.0', port='5000')

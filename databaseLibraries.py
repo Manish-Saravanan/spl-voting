@@ -9,7 +9,7 @@ def GetPass(rollno):
     cur.execute('''SELECT passcode FROM credentials WHERE RollNo = ?''', (rollno, ))
     c = cur.fetchone()
     if (c != None):
-        return base64.b64decode(c[0])
+        return base64.b64decode(c[0]).decode('ascii')
     else:
         return None
 
@@ -77,7 +77,7 @@ def GetAdminPass():
     cur.execute('''SELECT passcode FROM adminCredentials''')
     c = cur.fetchone()
     if (c != None):
-        return base64.b64decode(c[0])
+        return base64.b64decode(c[0]).decode('ascii')
     else:
         return None
 
@@ -130,7 +130,7 @@ def ResetElection():
     cur.execute('''UPDATE ElectionOpen SET isOpen = 0''')
     cur.execute("SELECT RollNo FROM Credentials")
     for candidate in cur.fetchall():
-        cur.execute("UPDATE credentials SET passcode = ?, Voted = 0 WHERE RollNo = ?", (base64.b64encode(str(randint(100000, 999999))), candidate[0]))
+        cur.execute("UPDATE credentials SET passcode = ?, Voted = 0 WHERE RollNo = ?", (base64.b64encode(str(randint(100000, 999999)).encode('utf-8')), candidate[0]))
     conn.commit()
 
 def GetVoterDetails(cls):
@@ -141,7 +141,7 @@ def GetVoterDetails(cls):
     ret_voters = []
     for voter in voters:
         attrs = list(voter)
-        attrs[1] = base64.b64decode(attrs[1])
+        attrs[1] = base64.b64decode(attrs[1]).decode('ascii')
         ret_voters.append(attrs)
     return ret_voters
 
@@ -155,7 +155,7 @@ def GetClassSection():
 def ChangePasswd(newpsswd):
     conn = sqlite3.connect('election.db')
     cur = conn.cursor()
-    cur.execute("UPDATE adminCredentials SET passcode = ?", (base64.b64encode(newpsswd), ))
+    cur.execute("UPDATE adminCredentials SET passcode = ?", (base64.b64encode(newpsswd.encode('utf-8')), ))
     conn.commit()
 
 def SetupVoters(cls):
@@ -164,7 +164,7 @@ def SetupVoters(cls):
     cur.execute("DELETE FROM credentials WHERE rollno LIKE ?", (cls + "%", ))
     for i in range(1, 41):
         rollNo = cls + "%02d"%i
-        password = base64.b64encode(str(randint(100000, 999999)))
+        password = base64.b64encode(str(randint(100000, 999999)).encode('utf-8'))
         cur.execute("INSERT INTO credentials(rollno, passcode, voted) VALUES(?, ?, '0')", (rollNo, password))
     conn.commit()
 
